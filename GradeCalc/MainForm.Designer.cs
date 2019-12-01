@@ -35,6 +35,7 @@
             this.tasksNum = new System.Windows.Forms.NumericUpDown();
             this.tasksLabel = new System.Windows.Forms.Label();
             this.algorithmLabel = new System.Windows.Forms.Label();
+            this.saveButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.configPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tasksNum)).BeginInit();
@@ -46,7 +47,7 @@
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.Location = new System.Drawing.Point(0, 0);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(891, 352);
+            this.dataGridView.Size = new System.Drawing.Size(696, 274);
             this.dataGridView.TabIndex = 0;
             // 
             // calcButton
@@ -62,15 +63,16 @@
             // 
             // configPanel
             // 
+            this.configPanel.Controls.Add(this.saveButton);
             this.configPanel.Controls.Add(this.algorithmLabel);
             this.configPanel.Controls.Add(this.tasksLabel);
             this.configPanel.Controls.Add(this.algorithmBox);
             this.configPanel.Controls.Add(this.tasksNum);
             this.configPanel.Controls.Add(this.calcButton);
             this.configPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.configPanel.Location = new System.Drawing.Point(0, 352);
+            this.configPanel.Location = new System.Drawing.Point(0, 274);
             this.configPanel.Name = "configPanel";
-            this.configPanel.Size = new System.Drawing.Size(891, 37);
+            this.configPanel.Size = new System.Drawing.Size(696, 37);
             this.configPanel.TabIndex = 2;
             // 
             // algorithmBox
@@ -79,10 +81,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.algorithmBox.FormattingEnabled = true;
             this.algorithmBox.Items.AddRange(new object[] {
-            "score / maxScore"});
+            "score / maxScore",
+            "Pow(score / maxScore, 0.8)",
+            "Pow(score / maxScore, 1.2)"});
             this.algorithmBox.Location = new System.Drawing.Point(357, 8);
             this.algorithmBox.Name = "algorithmBox";
-            this.algorithmBox.Size = new System.Drawing.Size(180, 21);
+            this.algorithmBox.Size = new System.Drawing.Size(309, 21);
             this.algorithmBox.TabIndex = 3;
             this.algorithmBox.Text = "score / maxScore";
             // 
@@ -130,15 +134,27 @@
             this.algorithmLabel.TabIndex = 5;
             this.algorithmLabel.Text = "Algorithm:";
             // 
+            // saveButton
+            // 
+            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveButton.Location = new System.Drawing.Point(670, 6);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(23, 23);
+            this.saveButton.TabIndex = 6;
+            this.saveButton.Text = "💾";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(891, 389);
+            this.ClientSize = new System.Drawing.Size(696, 311);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.configPanel);
             this.MinimumSize = new System.Drawing.Size(504, 156);
             this.Name = "MainForm";
+            this.ShowIcon = false;
             this.Text = "GradeCalc";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.configPanel.ResumeLayout(false);
@@ -157,6 +173,7 @@
         private System.Windows.Forms.ComboBox algorithmBox;
         private System.Windows.Forms.Label tasksLabel;
         private System.Windows.Forms.Label algorithmLabel;
+        private System.Windows.Forms.Button saveButton;
     }
 }
 
