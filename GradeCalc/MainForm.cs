@@ -43,12 +43,19 @@ namespace GradeCalc
                         totalScore += decimal.Parse((string)cell.FormattedValue);
                     }
                 });
-                Expression ex = new Expression(algorithmBox.Text);
-                ex.Parameters["score"] = (double)totalScore;
-                ex.Parameters["maxScore"] = (double)maxScore;
-                //double gradeVal = (double)totalScore / (double)maxScore;
-                double grade = 6 - (NCalcDoubleParser.Parse(ex.Evaluate()) * 5);
-                ((DataGridViewTextBoxCell)row.Cells[gradeColumn.Name]).Value = (grade.ToString().Length > 13 ? grade.ToString().Remove(13) : grade.ToString()) + " " + texGrade(grade);
+                try
+                {
+                    Expression ex = new Expression(algorithmBox.Text);
+                    ex.Parameters["score"] = (double)totalScore;
+                    ex.Parameters["maxScore"] = (double)maxScore;
+                    //double gradeVal = (double)totalScore / (double)maxScore;
+                    double grade = 6 - (NCalcDoubleParser.Parse(ex.Evaluate()) * 5);
+                    ((DataGridViewTextBoxCell)row.Cells[gradeColumn.Name]).Value = (grade.ToString().Length > 13 ? grade.ToString().Remove(13) : grade.ToString()) + " " + texGrade(grade);
+                }
+                catch (Exception e1)
+                {
+                    ((DataGridViewTextBoxCell)row.Cells[gradeColumn.Name]).Value = e1.Message;
+                }
             }
             dataGridView.Sort(nameColumn, ListSortDirection.Ascending);
         }

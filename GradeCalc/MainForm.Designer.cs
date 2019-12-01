@@ -79,12 +79,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.algorithmBox.FormattingEnabled = true;
             this.algorithmBox.Items.AddRange(new object[] {
-            "totalScore / maxScore"});
+            "score / maxScore"});
             this.algorithmBox.Location = new System.Drawing.Point(357, 8);
             this.algorithmBox.Name = "algorithmBox";
             this.algorithmBox.Size = new System.Drawing.Size(180, 21);
             this.algorithmBox.TabIndex = 3;
-            this.algorithmBox.Text = "totalScore / maxScore";
+            this.algorithmBox.Text = "score / maxScore";
             // 
             // tasksNum
             // 
