@@ -2,106 +2,104 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CC_Functions.Misc;
 using NCalc2;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace GradeCalc
 {
     public partial class MainForm : Form
     {
-        private readonly DataGridViewTextBoxColumn gradeColumn;
-        private readonly DataGridViewTextBoxColumn nameColumn;
+        private readonly DataGridViewTextBoxColumn _gradeColumn;
+        private readonly DataGridViewTextBoxColumn _nameColumn;
 
         private readonly List<DataGridViewNumericUpDownColumn>
-            taskColumns = new List<DataGridViewNumericUpDownColumn>();
+            _taskColumns = new List<DataGridViewNumericUpDownColumn>();
 
         public MainForm()
         {
             InitializeComponent();
-            nameColumn = new DataGridViewTextBoxColumn();
-            nameColumn.HeaderText = "Name";
-            nameColumn.Name = "Name";
-            dataGridView.Columns.Add(nameColumn);
-            gradeColumn = new DataGridViewTextBoxColumn();
-            gradeColumn.HeaderText = "Grade";
-            gradeColumn.Name = "Grade";
-            gradeColumn.ReadOnly = true;
-            dataGridView.Columns.Add(gradeColumn);
+            _nameColumn = new DataGridViewTextBoxColumn {HeaderText = "Name", Name = "Name"};
+            dataGridView.Columns.Add(_nameColumn);
+            _gradeColumn = new DataGridViewTextBoxColumn {HeaderText = "Grade", Name = "Grade", ReadOnly = true};
+            dataGridView.Columns.Add(_gradeColumn);
             tasksNum_ValueChanged(null, null);
         }
 
-        private int round(double val) => (int) Math.Round(val);
+        private static int Round(double val) => (int) Math.Round(val);
 
-        private Color getColor(double x, double max) =>
-            Color.FromArgb(round(255 * (1 - (x / max))), round(255 * (x / max)), 0);
+        private static Color GetColor(double x, double max) =>
+            Color.FromArgb(Round(255 * (1 - (x / max))), Round(255 * (x / max)), 0);
 
         private void calcButton_Click(object sender, EventArgs e)
         {
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
-                row.Cells[nameColumn.Name].Style.BackColor = Color.White;
-                DataGridViewTextBoxCell gradeCell = (DataGridViewTextBoxCell) row.Cells[gradeColumn.Name];
+                row.Cells[_nameColumn.Name].Style.BackColor = Color.White;
+                DataGridViewTextBoxCell gradeCell = (DataGridViewTextBoxCell) row.Cells[_gradeColumn.Name];
                 try
                 {
                     Expression ex = new Expression(algorithmBox.Text);
                     decimal maxScore = 0;
                     decimal totalScore = 0;
-                    taskColumns.ForEach(s =>
+                    _taskColumns.ForEach(s =>
                     {
                         DataGridViewNumericUpDownCell cell = (DataGridViewNumericUpDownCell) row.Cells[s.Name];
-                        if (!string.IsNullOrWhiteSpace((string) cell.FormattedValue))
-                        {
-                            maxScore += cell.Maximum;
-                            totalScore += decimal.Parse((string) cell.FormattedValue);
-                            ex.Parameters["score"] = decimal.Parse((string) cell.FormattedValue);
-                            ex.Parameters["maxScore"] = cell.Maximum;
-                            cell.Style.BackColor = getColor((float) NCalcDoubleParser.Parse(ex.Evaluate()), 1);
-                        }
+                        if (string.IsNullOrWhiteSpace((string) cell.FormattedValue)) return;
+                        maxScore += cell.Maximum;
+                        totalScore += decimal.Parse((string) cell.FormattedValue);
+                        ex.Parameters["score"] = decimal.Parse((string) cell.FormattedValue);
+                        ex.Parameters["maxScore"] = cell.Maximum;
+                        cell.Style.BackColor = GetColor((float) NCalcDoubleParser.Parse(ex.Evaluate()), 1);
                     });
                     ex.Parameters["score"] = (double) totalScore;
                     ex.Parameters["maxScore"] = (double) maxScore;
                     double grade = 6 - (NCalcDoubleParser.Parse(ex.Evaluate()) * 5);
-                    gradeCell.Value = (grade.ToString().Length > 13 ? grade.ToString().Remove(13) : grade.ToString()) +
-                                      " " + texGrade(grade);
-                    gradeCell.Style.BackColor = getColor(grade - 1, 5);
+                    gradeCell.Value = (grade.ToString(CultureInfo.InvariantCulture).Length > 13
+                                          ? grade.ToString(CultureInfo.InvariantCulture).Remove(13)
+                                          : grade.ToString(CultureInfo.InvariantCulture)) +
+                                      " " + TexGrade(grade);
+                    gradeCell.Style.BackColor = GetColor(grade - 1, 5);
                 }
-                catch (Exception e1)
+                catch (Exception)
                 {
                     gradeCell.Value = "";
                 }
             }
-            dataGridView.Sort(nameColumn, ListSortDirection.Ascending);
+            dataGridView.Sort(_nameColumn, ListSortDirection.Ascending);
         }
 
         private void tasksNum_ValueChanged(object sender, EventArgs e)
         {
-            while (tasksNum.Value < taskColumns.Count)
+            while (tasksNum.Value < _taskColumns.Count)
             {
-                DataGridViewNumericUpDownColumn col = taskColumns[taskColumns.Count - 1];
+                DataGridViewNumericUpDownColumn col = _taskColumns[_taskColumns.Count - 1];
                 dataGridView.Columns.Remove(col);
-                taskColumns.Remove(col);
+                _taskColumns.Remove(col);
                 col.Dispose();
             }
-            while (tasksNum.Value > taskColumns.Count)
+            while (tasksNum.Value > _taskColumns.Count)
             {
-                DataGridViewNumericUpDownColumn clm = new DataGridViewNumericUpDownColumn();
-                clm.Minimum = 0;
-                clm.Maximum = 10;
-                clm.Name = "Task " + (taskColumns.Count + 1);
+                DataGridViewNumericUpDownColumn clm = new DataGridViewNumericUpDownColumn
+                {
+                    Minimum = 0, Maximum = 10, Name = "Task " + (_taskColumns.Count + 1)
+                };
                 dataGridView.Columns.Add(clm);
-                taskColumns.Add(clm);
+                _taskColumns.Add(clm);
             }
-            gradeColumn.DisplayIndex = dataGridView.Columns.Count - 1;
+            _gradeColumn.DisplayIndex = dataGridView.Columns.Count - 1;
         }
 
-        private string texGrade(double g)
+        private static string TexGrade(double g)
         {
-            double gGrade = new[] {-0.5, 0, 0.5}.OrderBy(x => Math.Abs((x - (g - round(g))) + 1)).First();
-            return (char) (('A' + round(g)) - 1) +
+            double gGrade = new[] {-0.5, 0, 0.5}.OrderBy(x => Math.Abs((x - (g - Round(g))) + 1)).First();
+            return (char) (('A' + Round(g)) - 1) +
                    (g == 1 || gGrade == -0.5 ? "+" : g == 6 || gGrade == 0.5 ? "-" : "");
         }
 
@@ -111,38 +109,29 @@ namespace GradeCalc
             {
                 Filter = "Excel Spreadsheet|*.xlst"
             };
-            if (dialog.ShowDialog() == DialogResult.OK)
-                using (ExcelPackage excel = new ExcelPackage())
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using ExcelPackage excel = new ExcelPackage();
+            ExcelWorksheet worksheet = excel.Workbook.Worksheets.Add("Worksheet1");
+            List<string[]> headerRow = new List<string[]>
+            {
+                dataGridView.Columns.OfType<DataGridViewColumn>().Select(s => s.HeaderText).ToArray()
+            };
+            string headerRange = "A1:" + char.ConvertFromUtf32(headerRow[0].Length + 64) + "1";
+            worksheet.Cells[headerRange].LoadFromArrays(headerRow);
+            dataGridView.Rows.OfType<DataGridViewRow>()
+                .Reverse().Skip(1).Reverse().ToList().ForEach(s =>
                 {
-                    ExcelWorksheet worksheet = excel.Workbook.Worksheets.Add("Worksheet1");
-                    List<string[]> headerRow = new List<string[]>
+                    foreach (DataGridViewCell cell in s.Cells)
                     {
-                        dataGridView.Columns.OfType<DataGridViewColumn>().Select(s => s.HeaderText).ToArray()
-                    };
-                    string headerRange = "A1:" + char.ConvertFromUtf32(headerRow[0].Length + 64) + "1";
-                    ExcelRangeBase headers = worksheet.Cells[headerRange].LoadFromArrays(headerRow);
-                    headers.Style.Font.Bold = true;
-                    headers.Style.Font.Size = 14;
-                    /*worksheet.Cells[2, 1].LoadFromArrays(dataGridView.Rows.OfType<DataGridViewRow>()
-                        .Reverse().Skip(1).Reverse()
-                        .Select(s => s.Cells.OfType<DataGridViewCell>()
-                            .Select(t => t.Value.ToString())
-                            .ToArray()
-                        ));*/
-                    dataGridView.Rows.OfType<DataGridViewRow>()
-                        .Reverse().Skip(1).Reverse().ToList().ForEach(s =>
-                        {
-                            foreach (DataGridViewCell cell in s.Cells)
-                            {
-                                worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Value = cell.Value.ToString();
-                                worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Style.Fill.PatternType =
-                                    ExcelFillStyle.Solid;
-                                worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Style.Fill.BackgroundColor
-                                    .SetColor(cell.Style.BackColor);
-                            }
-                        });
-                    excel.SaveAs(new FileInfo(dialog.FileName));
-                }
+                        worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Value = cell.Value.ToString();
+                        worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Style.Fill.PatternType =
+                            ExcelFillStyle.Solid;
+                        worksheet.Cells[cell.RowIndex + 2, cell.ColumnIndex + 1].Style.Fill.BackgroundColor
+                            .SetColor(cell.Style.BackColor);
+                    }
+                });
+            excel.SaveAs(new FileInfo(dialog.FileName));
         }
     }
 }

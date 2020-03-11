@@ -1,155 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props" Condition="Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D5948BBB-1F03-497A-A2BA-DD1E6F54A2A8}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>GradeCalc</RootNamespace>
-    <AssemblyName>GradeCalc</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PostBuildEvent>if exist "$(SolutionDir)Data\pkgtool.exe" ($(SolutionDir)Data\pkgtool.exe build --noLogo --binDir .) else if exist "%appdata%\UpTool2\Apps\0e35d154-d0d3-45e0-b080-62f521263a44\app\pkgtool.exe" ("%appdata%\UpTool2\Apps\0e35d154-d0d3-45e0-b080-62f521263a44\app\pkgtool.exe" build --noLogo --binDir .) else echo Cound not find Package build tools, skipping</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1">
-      <HintPath>..\packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NCalc2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NCalc2.2.1.0\lib\net46\NCalc2.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Antlr4" Version="4.6.6" />
+    <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" />
+    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+    <PackageReference Include="CC-Functions.Misc" Version="1.0.6" />
+    <PackageReference Include="EPPlus" Version="5.0.4" />
+    <PackageReference Include="NCalc2" Version="2.1.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DataGridViewNumericUpDownCell.cs" />
-    <Compile Include="DataGridViewNumericUpDownColumn.cs" />
-    <Compile Include="DataGridViewNumericUpDownEditingControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NCalcDoubleParser.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="app.manifest" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>cd "$(SolutionDir)"
-if $(ConfigurationName)==Release (
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe PostBuild.cs /r:System.IO.Compression.FileSystem.dll
-PostBuild "$(TargetDir)\" "$(TargetFileName)"
-del PostBuild.exe
-)</PostBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.props'))" />
-    <Error Condition="!Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets'))" />
-  </Target>
-  <Import Project="..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets" Condition="Exists('..\packages\Antlr4.CodeGenerator.4.6.6\build\Antlr4.CodeGenerator.targets')" />
 </Project>
