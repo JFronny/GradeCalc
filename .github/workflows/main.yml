@@ -1,0 +1,77 @@
+name: CD
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1.0.2
+      with:
+        nuget-version: latest
+    - name: Build
+      id: base_init
+      run: |
+        nuget restore
+        $(new-object System.Net.WebClient).DownloadFile("https://www.github.com/JFronny/UpTool2/releases/latest/download/Tools.zip", "$($(pwd).Path)\Tools.zip")
+        & "C:\Program Files\7-Zip\7z.exe" x .\Tools.zip
+        rm Tools.zip
+        rm Install.bat
+        rm Remove.bat
+        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" -noLogo -verbosity:m -p:Configuration=Release
+        cp *\bin\Release\netcoreapp3.1\package.zip .
+        $file = Get-Item $(Resolve-Path *\bin\Release\netcoreapp3.1\*.exe).Path
+        $asm = $([Reflection.Assembly]::LoadFile($file.DirectoryName + "\" + $file.BaseName + ".dll"))
+        $asmver = $asm.GetName().Version.ToString()
+        echo "::set-output name=vers::$asmver"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.base_init.outputs.vers }}
+        release_name: Release ${{ steps.base_init.outputs.vers }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./package.zip
+        asset_name: package.zip
+        asset_content_type: application/zip
+    - name: Generate XML
+      id: make_xml
+      run: |
+        $file = Get-Item $(Resolve-Path *\bin\Release\netcoreapp3.1\*.exe).Path
+        $asm = [Reflection.Assembly]::LoadFile($file.DirectoryName + "\" + $file.BaseName + ".dll")
+        [System.XML.XMLDocument]$xml=New-Object System.XML.XMLDocument
+        [System.XML.XMLElement]$app=$xml.CreateElement("app")
+        $xml.appendChild($app)
+        $app.appendChild($xml.CreateElement("Name")).InnerText = $asm.GetName().Name
+        $app.appendChild($xml.CreateElement("Description")).InnerText = "Calculate grades for students"
+        $app.appendChild($xml.CreateElement("Version")).InnerText = "${{ steps.base_init.outputs.vers }}"
+        $app.appendChild($xml.CreateElement("ID")).InnerText = "c8119098-ec7f-4fb3-8668-9e81915b112d"
+        $app.appendChild($xml.CreateElement("File")).InnerText = "${{ steps.upload_release_asset.outputs.browser_download_url }}"
+        $app.appendChild($xml.CreateElement("Hash")).InnerText = $(Get-FileHash .\package.zip).Hash
+        $app.appendChild($xml.CreateElement("MainFile")).InnerText = $file.Name
+        echo NULL > app.xml
+        $xml.save($(gi .\app.xml).Fullname)
+    - name: Upload XML
+      id: upload_xml
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./app.xml
+        asset_name: app.xml
+        asset_content_type: text/xml
