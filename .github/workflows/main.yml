@@ -9,14 +9,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v1.0.2
-      with:
-        nuget-version: latest
     - name: Build
       id: base_init
       run: |
-        nuget restore
         $(new-object System.Net.WebClient).DownloadFile("https://www.github.com/JFronny/UpTool2/releases/latest/download/Tools.zip", "$($(pwd).Path)\Tools.zip")
         & "C:\Program Files\7-Zip\7z.exe" x .\Tools.zip
         rm Tools.zip
@@ -39,7 +34,6 @@ jobs:
         draft: false
         prerelease: false
     - name: Upload Release Asset
-      id: upload_release_asset
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +43,6 @@ jobs:
         asset_name: package.zip
         asset_content_type: application/zip
     - name: Generate XML
-      id: make_xml
       run: |
         $file = Get-Item $(Resolve-Path *\bin\Release\netcoreapp3.1\*.exe).Path
         $asm = [Reflection.Assembly]::LoadFile($file.DirectoryName + "\" + $file.BaseName + ".dll")
@@ -66,7 +59,6 @@ jobs:
         echo NULL > app.xml
         $xml.save($(gi .\app.xml).Fullname)
     - name: Upload XML
-      id: upload_xml
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
