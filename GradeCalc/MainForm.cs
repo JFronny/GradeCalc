@@ -35,7 +35,7 @@ namespace GradeCalc
         private static int Round(double val) => (int) Math.Round(val);
 
         private static Color GetColor(double x, double max) =>
-            Color.FromArgb(Round(255 * (1 - (x / max))), Round(255 * (x / max)), 0);
+            Color.FromArgb(Round(255 * (x / max)), Round(255 * (1 - (x / max))), 0);
 
         private void calcButton_Click(object sender, EventArgs e)
         {
