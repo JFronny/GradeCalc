@@ -22,7 +22,7 @@ jobs:
         rm Tools.zip
         rm Install.bat
         rm Remove.bat
-        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" -noLogo -verbosity:m -p:Configuration=Release
+        dotnet build --verbosity:m -p:Configuration=Release
         cp *\bin\Release\netcoreapp3.1\package.zip .
         $file = Get-Item $(Resolve-Path *\bin\Release\netcoreapp3.1\*.exe).Path
         $asm = $([Reflection.Assembly]::LoadFile($file.DirectoryName + "\" + $file.BaseName + ".dll"))
