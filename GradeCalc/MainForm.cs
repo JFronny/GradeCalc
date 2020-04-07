@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CC_Functions.Misc;
+using CC_Functions.W32.Forms;
 using NCalc2;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
