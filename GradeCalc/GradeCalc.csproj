@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CC-Functions.W32" Version="1.1.7399.26972" />
-    <PackageReference Include="EPPlus" Version="5.0.4" />
+    <PackageReference Include="EPPlus" Version="5.1.0" />
     <PackageReference Include="NCalc2" Version="2.1.0" />
   </ItemGroup>
 </Project>
