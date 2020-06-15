@@ -10,7 +10,7 @@
     <PostBuildEvent>if exist "$(SolutionDir)Data\pkgtool.exe" ($(SolutionDir)Data\pkgtool.exe build --noLogo --binDir .) else if exist "%appdata%\UpTool2\Apps\0e35d154-d0d3-45e0-b080-62f521263a44\app\pkgtool.exe" ("%appdata%\UpTool2\Apps\0e35d154-d0d3-45e0-b080-62f521263a44\app\pkgtool.exe" build --noLogo --binDir .) else echo Cound not find Package build tools, skipping</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CC-Functions.W32" Version="1.1.7450.31626" />
+    <PackageReference Include="CC-Functions.W32" Version="1.1.7468.32091" />
     <PackageReference Include="EPPlus" Version="5.1.2" />
     <PackageReference Include="NCalc2" Version="2.1.0" />
   </ItemGroup>
